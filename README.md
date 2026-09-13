@@ -1,26 +1,16 @@
-# Slot Machine SFX Library
+# Slot Machine Win Expansion
 
-Original procedurally-generated WAV sound effects designed for use in a game project.
+This pack adds 16 longer, more elaborate win sounds:
 
-Format:
-- Mono WAV
-- 48 kHz
-- 16-bit PCM
+- 4 x Small Win (~1.25 s)
+- 4 x Medium Win (~2.15 s)
+- 4 x Big Win (~3.35 s)
+- 4 x Jackpot Fanfare (~5.40 s)
 
-Folders:
-- reels: repeatable ticks, spin-up, spin-down, reel stop
-- buttons: press, confirm, cancel, spin, toggle
-- ui: hover, tab, open/close, error, notification
-- coins: credit/coin pings and count-up sounds
-- losses: no-win and loss cues
-- wins_small / wins_medium / wins_big: increasing reward intensity
-- jackpot: large jackpot fanfares
-- bonus: bonus trigger/end cues
-- symbols: scatter and wild hits
-- impacts: generic machine impacts
-- transitions: whooshes
-- alerts: countdown and attention cues
-- loops: short mechanical reel ambience loops
+Each named family (Gold Rush, Neon Luck, Royal Flush, Lucky Sevens) uses the same
+musical motif across all four tiers, with increasing length and complexity.
 
-Godot tip:
-For repetitive sounds like reel ticks and coin pings, randomly choose among several variations and apply very small pitch variation (for example 0.97–1.03) to reduce listener fatigue.
+To merge into your existing library:
+1. Copy each category folder over the matching folder in your SFX library.
+2. Replace your old `manifest.csv` with the included updated `manifest.csv`.
+3. Your existing GitHub Pages preview page will pick them up automatically.
