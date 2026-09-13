@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slot Machine SFX Library</title>
+  <meta name="description" content="Preview and play slot machine sound effects.">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c0e13;
+      --panel: #141821;
+      --panel-2: #1a1f2b;
+      --border: #2a3140;
+      --text: #f3f5f7;
+      --muted: #969fad;
+      --accent: #e6b84a;
+      --accent-2: #ffdb7a;
+      --danger: #ef6b73;
+      --radius: 14px;
+      --shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(230,184,74,.08), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 72px;
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: .78rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto auto auto;
+      gap: 10px;
+      padding: 12px;
+      margin: 24px 0;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 4px);
+      background: rgba(20, 24, 33, .88);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0f131a;
+    }
+
+    .field input[type="search"] {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .field input[type="range"] {
+      width: 110px;
+      accent-color: var(--accent);
+    }
+
+    select {
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      background: #0f131a;
+      color: var(--text);
+    }
+
+    .toolbar button,
+    .sound-btn {
+      min-height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-2);
+      cursor: pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+
+    .toolbar button {
+      padding: 0 14px;
+    }
+
+    .toolbar button:hover,
+    .sound-btn:hover {
+      transform: translateY(-1px);
+      border-color: #465166;
+    }
+
+    .toolbar button:active,
+    .sound-btn:active {
+      transform: translateY(0);
+    }
+
+    .toolbar .stop-all {
+      color: #ffd7da;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: .83rem;
+    }
+
+    .category {
+      margin-top: 26px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .category h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: -.02em;
+      text-transform: capitalize;
+    }
+
+    .category-count {
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .sound-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sound {
+      display: grid;
+      grid-template-columns: 44px minmax(180px, 1.2fr) minmax(170px, .8fr) 84px minmax(130px, .7fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--panel), #11151d);
+      transition: border-color .12s ease, background .12s ease;
+    }
+
+    .sound.playing {
+      border-color: rgba(230,184,74,.75);
+      background:
+        linear-gradient(90deg, rgba(230,184,74,.10), transparent 35%),
+        linear-gradient(180deg, var(--panel), #11151d);
+    }
+
+    .sound-btn {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      min-height: 44px;
+      padding: 0;
+      font-weight: 900;
+      color: var(--accent-2);
+    }
+
+    .sound-name {
+      min-width: 0;
+    }
+
+    .sound-name strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: .94rem;
+    }
+
+    .sound-name small,
+    .description,
+    .duration {
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .description {
+      line-height: 1.35;
+    }
+
+    .duration {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress {
+      position: relative;
+      width: 100%;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #0a0d12;
+      border: 1px solid #202632;
+      cursor: pointer;
+    }
+
+    .progress > span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .empty,
+    .error {
+      padding: 28px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .error {
+      color: #ffc4c8;
+      border-color: rgba(239,107,115,.4);
+      background: rgba(239,107,115,.06);
+    }
+
+    footer {
+      margin-top: 42px;
+      color: var(--muted);
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    kbd {
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      background: var(--panel);
+      color: var(--text);
+      font-size: .72rem;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .toolbar .search-field {
+        grid-column: 1 / -1;
+      }
+
+      .sound {
+        grid-template-columns: 44px minmax(0, 1fr) 68px;
+      }
+
+      .description {
+        grid-column: 2 / -1;
+      }
+
+      .progress-wrap {
+        grid-column: 2 / -1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 24px;
+      }
+
+      .toolbar {
+        position: static;
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar .search-field {
+        grid-column: auto;
+      }
+
+      .sound {
+        grid-template-columns: 44px minmax(0, 1fr) 58px;
+        gap: 9px;
+      }
+
+      .description {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Audio Preview</p>
+      <h1>Slot Machine SFX Library</h1>
+      <p class="subtitle">
+        Browse, filter, and preview the complete sound library directly in your browser.
+        Only one sound plays at a time.
+      </p>
+    </header>
+
+    <section class="toolbar" aria-label="Sound library controls">
+      <label class="field search-field">
+        <span aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Search sounds, tags, categories..." autocomplete="off">
+      </label>
+
+      <select id="categoryFilter" aria-label="Filter by category">
+        <option value="">All categories</option>
+      </select>
+
+      <label class="field" title="Master volume">
+        <span>🔊</span>
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="0.75">
+      </label>
+
+      <button id="stopAll" class="stop-all" type="button">■ Stop</button>
+    </section>
+
+    <div id="stats" class="stats"></div>
+    <div id="library" aria-live="polite">
+      <div class="empty">Loading sound library…</div>
+    </div>
+
+    <footer>
+      Tip: press <kbd>Space</kbd> to stop the currently playing sound.
+    </footer>
+  </main>
+
+  <script>
+    const MANIFEST_URL = "manifest.csv";
+
+    const libraryEl = document.getElementById("library");
+    const statsEl = document.getElementById("stats");
+    const searchEl = document.getElementById("search");
+    const categoryFilterEl = document.getElementById("categoryFilter");
+    const volumeEl = document.getElementById("volume");
+    const stopAllEl = document.getElementById("stopAll");
+
+    /** @type {Array<{category:string, filename:string, duration_seconds:number, description:string, tags:string}>} */
+    let sounds = [];
+
+    /** @type {HTMLAudioElement | null} */
+    let currentAudio = null;
+
+    /** @type {HTMLElement | null} */
+    let currentRow = null;
+
+    /** @type {HTMLButtonElement | null} */
+    let currentButton = null;
+
+    let animationFrameId = 0;
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let quoted = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (quoted && next === '"') {
+            field += '"';
+            i++;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === "," && !quoted) {
+          row.push(field);
+          field = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(field);
+          field = "";
+
+          if (row.some(value => value.length > 0)) {
+            rows.push(row);
+          }
+
+          row = [];
+        } else {
+          field += char;
+        }
+      }
+
+      if (field.length > 0 || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+      }
+
+      const headers = rows.shift()?.map(v => v.trim()) ?? [];
+
+      return rows.map(values => {
+        const obj = {};
+        headers.forEach((header, index) => {
+          obj[header] = values[index] ?? "";
+        });
+        return obj;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function prettyName(filename) {
+      return filename
+        .replace(/\.wav$/i, "")
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function prettyCategory(category) {
+      return category.replaceAll("_", " ");
+    }
+
+    function soundUrl(sound) {
+      return `${encodeURIComponent(sound.category)}/${encodeURIComponent(sound.filename)}`;
+    }
+
+    function stopCurrent(resetTime = true) {
+      cancelAnimationFrame(animationFrameId);
+
+      if (currentAudio) {
+        currentAudio.pause();
+        if (resetTime) currentAudio.currentTime = 0;
+      }
+
+      if (currentRow) {
+        currentRow.classList.remove("playing");
+        const bar = currentRow.querySelector(".progress > span");
+        if (bar && resetTime) bar.style.width = "0%";
+      }
+
+      if (currentButton) {
+        currentButton.textContent = "▶";
+        currentButton.setAttribute("aria-label", "Play");
+      }
+
+      currentAudio = null;
+      currentRow = null;
+      currentButton = null;
+    }
+
+    function updateProgress() {
+      if (!currentAudio || !currentRow) return;
+
+      const bar = currentRow.querySelector(".progress > span");
+      const pct = currentAudio.duration
+        ? Math.min(100, (currentAudio.currentTime / currentAudio.duration) * 100)
+        : 0;
+
+      if (bar) bar.style.width = `${pct}%`;
+
+      if (!currentAudio.paused && !currentAudio.ended) {
+        animationFrameId = requestAnimationFrame(updateProgress);
+      }
+    }
+
+    function playSound(sound, row, button) {
+      const sameSound = currentRow === row && currentAudio;
+
+      if (sameSound && !currentAudio.paused) {
+        stopCurrent(false);
+        return;
+      }
+
+      stopCurrent();
+
+      const audio = new Audio(soundUrl(sound));
+      audio.volume = Number(volumeEl.value);
+      audio.preload = "auto";
+
+      currentAudio = audio;
+      currentRow = row;
+      currentButton = button;
+
+      row.classList.add("playing");
+      button.textContent = "❚❚";
+      button.setAttribute("aria-label", `Pause ${prettyName(sound.filename)}`);
+
+      audio.addEventListener("ended", () => stopCurrent());
+      audio.addEventListener("error", () => {
+        console.error("Could not load audio:", soundUrl(sound));
+        stopCurrent();
+      });
+
+      audio.play()
+        .then(() => updateProgress())
+        .catch(error => {
+          console.error(error);
+          stopCurrent();
+        });
+    }
+
+    function renderStats(filtered) {
+      const categories = new Set(filtered.map(s => s.category));
+      statsEl.innerHTML = `
+        <span class="stat">${filtered.length} sound${filtered.length === 1 ? "" : "s"}</span>
+        <span class="stat">${categories.size} categor${categories.size === 1 ? "y" : "ies"}</span>
+        <span class="stat">48 kHz · mono WAV</span>
+      `;
+    }
+
+    function render() {
+      stopCurrent();
+
+      const query = searchEl.value.trim().toLowerCase();
+      const selectedCategory = categoryFilterEl.value;
+
+      const filtered = sounds.filter(sound => {
+        if (selectedCategory && sound.category !== selectedCategory) {
+          return false;
+        }
+
+        if (!query) return true;
+
+        const haystack = [
+          sound.category,
+          sound.filename,
+          sound.description,
+          sound.tags
+        ].join(" ").toLowerCase();
+
+        return haystack.includes(query);
+      });
+
+      renderStats(filtered);
+
+      if (filtered.length === 0) {
+        libraryEl.innerHTML = `<div class="empty">No sounds match your filters.</div>`;
+        return;
+      }
+
+      const groups = Map.groupBy
+        ? Map.groupBy(filtered, sound => sound.category)
+        : filtered.reduce((map, sound) => {
+            if (!map.has(sound.category)) map.set(sound.category, []);
+            map.get(sound.category).push(sound);
+            return map;
+          }, new Map());
+
+      libraryEl.innerHTML = "";
+
+      for (const [category, items] of groups) {
+        const section = document.createElement("section");
+        section.className = "category";
+
+        section.innerHTML = `
+          <div class="category-header">
+            <h2>${escapeHtml(prettyCategory(category))}</h2>
+            <span class="category-count">${items.length} sound${items.length === 1 ? "" : "s"}</span>
+          </div>
+          <div class="sound-list"></div>
+        `;
+
+        const list = section.querySelector(".sound-list");
+
+        for (const sound of items) {
+          const row = document.createElement("article");
+          row.className = "sound";
+
+          const tags = sound.tags
+            .split(",")
+            .map(tag => tag.trim())
+            .filter(Boolean)
+            .slice(0, 4)
+            .join(" · ");
+
+          row.innerHTML = `
+            <button class="sound-btn" type="button" aria-label="Play ${escapeHtml(prettyName(sound.filename))}">▶</button>
+
+            <div class="sound-name">
+              <strong title="${escapeHtml(sound.filename)}">${escapeHtml(prettyName(sound.filename))}</strong>
+              <small>${escapeHtml(tags)}</small>
+            </div>
+
+            <div class="description">
+              ${escapeHtml(sound.description || "")}
+            </div>
+
+            <div class="duration">
+              ${Number(sound.duration_seconds || 0).toFixed(2)}s
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress" title="Seek">
+                <span></span>
+              </div>
+            </div>
+          `;
+
+          const button = row.querySelector(".sound-btn");
+          const progress = row.querySelector(".progress");
+
+          button.addEventListener("click", () => playSound(sound, row, button));
+
+          progress.addEventListener("click", event => {
+            if (!currentAudio || currentRow !== row || !currentAudio.duration) {
+              playSound(sound, row, button);
+              return;
+            }
+
+            const rect = progress.getBoundingClientRect();
+            const pct = (event.clientX - rect.left) / rect.width;
+            currentAudio.currentTime = Math.max(0, Math.min(currentAudio.duration, pct * currentAudio.duration));
+            updateProgress();
+          });
+
+          list.appendChild(row);
+        }
+
+        libraryEl.appendChild(section);
+      }
+    }
+
+    async function init() {
+      try {
+        const response = await fetch(MANIFEST_URL, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const csv = await response.text();
+        const parsed = parseCSV(csv);
+
+        sounds = parsed
+          .filter(row => row.category && row.filename)
+          .map(row => ({
+            category: row.category.trim(),
+            filename: row.filename.trim(),
+            duration_seconds: Number(row.duration_seconds || 0),
+            description: row.description?.trim() ?? "",
+            tags: row.tags?.trim() ?? ""
+          }));
+
+        if (sounds.length === 0) {
+          throw new Error("The manifest contains no sound entries.");
+        }
+
+        const categories = [...new Set(sounds.map(s => s.category))]
+          .sort((a, b) => a.localeCompare(b));
+
+        for (const category of categories) {
+          const option = document.createElement("option");
+          option.value = category;
+          option.textContent = prettyCategory(category);
+          categoryFilterEl.appendChild(option);
+        }
+
+        render();
+      } catch (error) {
+        console.error(error);
+
+        libraryEl.innerHTML = `
+          <div class="error">
+            <strong>Could not load <code>manifest.csv</code>.</strong><br><br>
+            Make sure <code>index.html</code> is in the same folder as
+            <code>manifest.csv</code> and the category folders.
+            <br><br>
+            This page must also be opened through a web server or GitHub Pages,
+            not directly with <code>file://</code>.
+          </div>
+        `;
+      }
+    }
+
+    searchEl.addEventListener("input", render);
+    categoryFilterEl.addEventListener("change", render);
+
+    volumeEl.addEventListener("input", () => {
+      if (currentAudio) {
+        currentAudio.volume = Number(volumeEl.value);
+      }
+    });
+
+    stopAllEl.addEventListener("click", () => stopCurrent());
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.code === "Space" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "SELECT"
+      ) {
+        event.preventDefault();
+        stopCurrent();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
