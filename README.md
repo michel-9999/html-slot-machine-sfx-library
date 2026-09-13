@@ -1,17 +1,16 @@
-# No-Win & Loss Jingle Expansion
+# Short Loss Jingle Expansion
 
-Adds 16 new musical result cues:
+Adds 8 shorter loss jingles designed to sit alongside the earlier longer loss set.
 
-- 8 no-win jingles (~1.55–1.69 s)
-- 8 loss jingles (~1.90–2.06 s)
+Lengths:
+- Approximately 1.04–1.26 seconds
 
-The no-win cues are deliberately restrained and neutral so they work well after
-ordinary non-winning spins without becoming irritating.
-
-The loss cues have clearer downward melodic movement and slightly darker harmony,
-but avoid harsh buzzers or abrasive fail sounds.
+These retain small musical phrases and proper cadences, but reach the result much
+faster so a normal losing spin does not stall the game's pacing.
 
 Integration:
-1. Copy the `losses` folder into your existing Slot Machine SFX Library.
-2. Replace your existing `manifest.csv` with the included updated manifest.
-3. Your existing GitHub Pages sound previewer will list the new sounds automatically.
+1. Copy the `losses` folder into your existing SFX library.
+2. Replace your current `manifest.csv` with the included one.
+3. Your existing GitHub Pages preview page will discover them automatically.
+
+The previous longer loss jingles remain in the manifest so you can compare both sets.
