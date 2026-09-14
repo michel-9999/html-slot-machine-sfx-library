@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Slot Machine SFX Library</title>
-  <meta name="description" content="Preview and play slot machine sound effects.">
+  <title>Game SFX Library</title>
+  <meta name="description" content="Preview, favorite, filter, and download game sound effects.">
 
   <style>
     :root {
@@ -12,14 +12,17 @@
       --bg: #0c0e13;
       --panel: #141821;
       --panel-2: #1a1f2b;
+      --panel-3: #10141c;
       --border: #2a3140;
+      --border-strong: #465166;
       --text: #f3f5f7;
       --muted: #969fad;
       --accent: #e6b84a;
       --accent-2: #ffdb7a;
+      --accent-soft: rgba(230, 184, 74, .12);
       --danger: #ef6b73;
       --radius: 14px;
-      --shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+      --shadow: 0 14px 34px rgba(0, 0, 0, .28);
     }
 
     * {
@@ -37,7 +40,7 @@
         Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top, rgba(230,184,74,.08), transparent 34rem),
+        radial-gradient(circle at top, rgba(230, 184, 74, .08), transparent 34rem),
         var(--bg);
       color: var(--text);
     }
@@ -53,7 +56,7 @@
     }
 
     .page {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1220px, calc(100% - 32px));
       margin: 0 auto;
       padding: 36px 0 72px;
     }
@@ -80,7 +83,7 @@
 
     .subtitle {
       margin: 14px 0 0;
-      max-width: 780px;
+      max-width: 850px;
       color: var(--muted);
       line-height: 1.65;
     }
@@ -90,13 +93,13 @@
       top: 12px;
       z-index: 10;
       display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto auto auto;
+      grid-template-columns: minmax(220px, 1fr) auto auto auto auto;
       gap: 10px;
       padding: 12px;
       margin: 24px 0;
       border: 1px solid var(--border);
       border-radius: calc(var(--radius) + 4px);
-      background: rgba(20, 24, 33, .88);
+      background: rgba(20, 24, 33, .90);
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
     }
@@ -136,13 +139,19 @@
     }
 
     .toolbar button,
-    .sound-btn {
+    .sound-btn,
+    .icon-btn,
+    .download-btn {
       min-height: 42px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--panel-2);
       cursor: pointer;
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      transition:
+        transform .12s ease,
+        border-color .12s ease,
+        background .12s ease,
+        color .12s ease;
     }
 
     .toolbar button {
@@ -150,18 +159,28 @@
     }
 
     .toolbar button:hover,
-    .sound-btn:hover {
+    .sound-btn:hover,
+    .icon-btn:hover,
+    .download-btn:hover {
       transform: translateY(-1px);
-      border-color: #465166;
+      border-color: var(--border-strong);
     }
 
     .toolbar button:active,
-    .sound-btn:active {
+    .sound-btn:active,
+    .icon-btn:active,
+    .download-btn:active {
       transform: translateY(0);
     }
 
     .toolbar .stop-all {
       color: #ffd7da;
+    }
+
+    .favorites-filter.active {
+      border-color: rgba(230, 184, 74, .75);
+      background: var(--accent-soft);
+      color: var(--accent-2);
     }
 
     .stats {
@@ -211,8 +230,15 @@
 
     .sound {
       display: grid;
-      grid-template-columns: 44px minmax(180px, 1.2fr) minmax(170px, .8fr) 84px minmax(130px, .7fr);
-      gap: 12px;
+      grid-template-columns:
+        44px
+        44px
+        minmax(180px, 1.2fr)
+        minmax(170px, .8fr)
+        72px
+        minmax(120px, .65fr)
+        44px;
+      gap: 10px;
       align-items: center;
       padding: 10px;
       border: 1px solid var(--border);
@@ -222,20 +248,46 @@
     }
 
     .sound.playing {
-      border-color: rgba(230,184,74,.75);
+      border-color: rgba(230, 184, 74, .75);
       background:
-        linear-gradient(90deg, rgba(230,184,74,.10), transparent 35%),
+        linear-gradient(90deg, rgba(230, 184, 74, .10), transparent 35%),
         linear-gradient(180deg, var(--panel), #11151d);
     }
 
-    .sound-btn {
+    .sound.favorite {
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .sound-btn,
+    .icon-btn,
+    .download-btn {
       display: grid;
       place-items: center;
       width: 44px;
       min-height: 44px;
       padding: 0;
+    }
+
+    .sound-btn {
       font-weight: 900;
       color: var(--accent-2);
+    }
+
+    .favorite-btn {
+      font-size: 1.18rem;
+      color: #747d8b;
+    }
+
+    .favorite-btn.active {
+      color: var(--accent-2);
+      border-color: rgba(230, 184, 74, .55);
+      background: var(--accent-soft);
+    }
+
+    .download-btn {
+      text-decoration: none;
+      color: #b9c3d0;
+      font-weight: 700;
     }
 
     .sound-name {
@@ -301,8 +353,8 @@
 
     .error {
       color: #ffc4c8;
-      border-color: rgba(239,107,115,.4);
-      background: rgba(239,107,115,.06);
+      border-color: rgba(239, 107, 115, .4);
+      background: rgba(239, 107, 115, .06);
     }
 
     footer {
@@ -322,9 +374,9 @@
       font-size: .72rem;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1020px) {
       .toolbar {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
       }
 
       .toolbar .search-field {
@@ -332,21 +384,21 @@
       }
 
       .sound {
-        grid-template-columns: 44px minmax(0, 1fr) 68px;
+        grid-template-columns: 44px 44px minmax(0, 1fr) 68px 44px;
       }
 
       .description {
-        grid-column: 2 / -1;
+        grid-column: 3 / -1;
       }
 
       .progress-wrap {
-        grid-column: 2 / -1;
+        grid-column: 3 / -1;
       }
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 650px) {
       .page {
-        width: min(100% - 20px, 1180px);
+        width: min(100% - 20px, 1220px);
         padding-top: 24px;
       }
 
@@ -360,12 +412,22 @@
       }
 
       .sound {
-        grid-template-columns: 44px minmax(0, 1fr) 58px;
-        gap: 9px;
+        grid-template-columns: 44px 44px minmax(0, 1fr) 44px;
+        gap: 8px;
       }
 
+      .duration,
       .description {
         display: none;
+      }
+
+      .progress-wrap {
+        grid-column: 3 / -1;
+      }
+
+      .download-btn {
+        grid-column: 4;
+        grid-row: 1;
       }
     }
   </style>
@@ -375,10 +437,10 @@
   <main class="page">
     <header>
       <p class="eyebrow">Audio Preview</p>
-      <h1>Slot Machine SFX Library</h1>
+      <h1>Game SFX Library</h1>
       <p class="subtitle">
-        Browse, filter, and preview the complete sound library directly in your browser.
-        Only one sound plays at a time.
+        Browse, favorite, preview, and download sound effects directly in your browser.
+        Favorites are stored locally in this browser.
       </p>
     </header>
 
@@ -392,8 +454,12 @@
         <option value="">All categories</option>
       </select>
 
+      <button id="favoritesFilter" class="favorites-filter" type="button" aria-pressed="false">
+        ★ Favorites
+      </button>
+
       <label class="field" title="Master volume">
-        <span>🔊</span>
+        <span aria-hidden="true">🔊</span>
         <input id="volume" type="range" min="0" max="1" step="0.01" value="0.75">
       </label>
 
@@ -401,27 +467,36 @@
     </section>
 
     <div id="stats" class="stats"></div>
+
     <div id="library" aria-live="polite">
       <div class="empty">Loading sound library…</div>
     </div>
 
     <footer>
-      Tip: press <kbd>Space</kbd> to stop the currently playing sound.
+      <kbd>Space</kbd> stops the current sound.
+      Favorites are saved with <code>localStorage</code>.
     </footer>
   </main>
 
   <script>
     const MANIFEST_URL = "manifest.csv";
+    const FAVORITES_STORAGE_KEY = "game_sfx_library_favorites_v1";
 
     const libraryEl = document.getElementById("library");
     const statsEl = document.getElementById("stats");
     const searchEl = document.getElementById("search");
     const categoryFilterEl = document.getElementById("categoryFilter");
+    const favoritesFilterEl = document.getElementById("favoritesFilter");
     const volumeEl = document.getElementById("volume");
     const stopAllEl = document.getElementById("stopAll");
 
     /** @type {Array<{category:string, filename:string, duration_seconds:number, description:string, tags:string}>} */
     let sounds = [];
+
+    /** @type {Set<string>} */
+    let favorites = loadFavorites();
+
+    let favoritesOnly = false;
 
     /** @type {HTMLAudioElement | null} */
     let currentAudio = null;
@@ -433,6 +508,44 @@
     let currentButton = null;
 
     let animationFrameId = 0;
+
+    function soundKey(sound) {
+      return `${sound.category}/${sound.filename}`;
+    }
+
+    function loadFavorites() {
+      try {
+        const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        const values = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(values) ? values : []);
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveFavorites() {
+      try {
+        localStorage.setItem(
+          FAVORITES_STORAGE_KEY,
+          JSON.stringify([...favorites].sort())
+        );
+      } catch (error) {
+        console.warn("Could not save favorites:", error);
+      }
+    }
+
+    function toggleFavorite(sound) {
+      const key = soundKey(sound);
+
+      if (favorites.has(key)) {
+        favorites.delete(key);
+      } else {
+        favorites.add(key);
+      }
+
+      saveFavorites();
+      render();
+    }
 
     function parseCSV(text) {
       const rows = [];
@@ -474,7 +587,7 @@
         rows.push(row);
       }
 
-      const headers = rows.shift()?.map(v => v.trim()) ?? [];
+      const headers = rows.shift()?.map(value => value.trim()) ?? [];
 
       return rows.map(values => {
         const obj = {};
@@ -498,7 +611,7 @@
       return filename
         .replace(/\.wav$/i, "")
         .replaceAll("_", " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
+        .replace(/\b\w/g, character => character.toUpperCase());
     }
 
     function prettyCategory(category) {
@@ -514,13 +627,19 @@
 
       if (currentAudio) {
         currentAudio.pause();
-        if (resetTime) currentAudio.currentTime = 0;
+
+        if (resetTime) {
+          currentAudio.currentTime = 0;
+        }
       }
 
       if (currentRow) {
         currentRow.classList.remove("playing");
         const bar = currentRow.querySelector(".progress > span");
-        if (bar && resetTime) bar.style.width = "0%";
+
+        if (bar && resetTime) {
+          bar.style.width = "0%";
+        }
       }
 
       if (currentButton) {
@@ -534,14 +653,19 @@
     }
 
     function updateProgress() {
-      if (!currentAudio || !currentRow) return;
+      if (!currentAudio || !currentRow) {
+        return;
+      }
 
       const bar = currentRow.querySelector(".progress > span");
-      const pct = currentAudio.duration
+
+      const percent = currentAudio.duration
         ? Math.min(100, (currentAudio.currentTime / currentAudio.duration) * 100)
         : 0;
 
-      if (bar) bar.style.width = `${pct}%`;
+      if (bar) {
+        bar.style.width = `${percent}%`;
+      }
 
       if (!currentAudio.paused && !currentAudio.ended) {
         animationFrameId = requestAnimationFrame(updateProgress);
@@ -571,6 +695,7 @@
       button.setAttribute("aria-label", `Pause ${prettyName(sound.filename)}`);
 
       audio.addEventListener("ended", () => stopCurrent());
+
       audio.addEventListener("error", () => {
         console.error("Could not load audio:", soundUrl(sound));
         stopCurrent();
@@ -584,11 +709,56 @@
         });
     }
 
+    async function downloadSound(sound, button) {
+      const originalText = button.textContent;
+
+      try {
+        button.disabled = true;
+        button.textContent = "…";
+
+        const response = await fetch(soundUrl(sound));
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = sound.filename;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      } catch (error) {
+        console.error("Download failed:", error);
+
+        // Fallback: direct same-origin download.
+        const link = document.createElement("a");
+        link.href = soundUrl(sound);
+        link.download = sound.filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    }
+
     function renderStats(filtered) {
-      const categories = new Set(filtered.map(s => s.category));
+      const categories = new Set(filtered.map(sound => sound.category));
+      const favoriteCount = sounds.filter(sound => favorites.has(soundKey(sound))).length;
+
       statsEl.innerHTML = `
-        <span class="stat">${filtered.length} sound${filtered.length === 1 ? "" : "s"}</span>
-        <span class="stat">${categories.size} categor${categories.size === 1 ? "y" : "ies"}</span>
+        <span class="stat">${filtered.length} sound${filtered.length === 1 ? "" : "s"} shown</span>
+        <span class="stat">${sounds.length} total</span>
+        <span class="stat">${favoriteCount} favorite${favoriteCount === 1 ? "" : "s"}</span>
+        <span class="stat">${categories.size} categor${categories.size === 1 ? "y" : "ies"} shown</span>
         <span class="stat">48 kHz · mono WAV</span>
       `;
     }
@@ -599,12 +769,21 @@
       const query = searchEl.value.trim().toLowerCase();
       const selectedCategory = categoryFilterEl.value;
 
+      favoritesFilterEl.classList.toggle("active", favoritesOnly);
+      favoritesFilterEl.setAttribute("aria-pressed", String(favoritesOnly));
+
       const filtered = sounds.filter(sound => {
         if (selectedCategory && sound.category !== selectedCategory) {
           return false;
         }
 
-        if (!query) return true;
+        if (favoritesOnly && !favorites.has(soundKey(sound))) {
+          return false;
+        }
+
+        if (!query) {
+          return true;
+        }
 
         const haystack = [
           sound.category,
@@ -619,17 +798,24 @@
       renderStats(filtered);
 
       if (filtered.length === 0) {
-        libraryEl.innerHTML = `<div class="empty">No sounds match your filters.</div>`;
+        libraryEl.innerHTML = `
+          <div class="empty">
+            ${favoritesOnly
+              ? "No favorite sounds match the current filters."
+              : "No sounds match your filters."}
+          </div>
+        `;
         return;
       }
 
-      const groups = Map.groupBy
-        ? Map.groupBy(filtered, sound => sound.category)
-        : filtered.reduce((map, sound) => {
-            if (!map.has(sound.category)) map.set(sound.category, []);
-            map.get(sound.category).push(sound);
-            return map;
-          }, new Map());
+      const groups = filtered.reduce((map, sound) => {
+        if (!map.has(sound.category)) {
+          map.set(sound.category, []);
+        }
+
+        map.get(sound.category).push(sound);
+        return map;
+      }, new Map());
 
       libraryEl.innerHTML = "";
 
@@ -640,7 +826,9 @@
         section.innerHTML = `
           <div class="category-header">
             <h2>${escapeHtml(prettyCategory(category))}</h2>
-            <span class="category-count">${items.length} sound${items.length === 1 ? "" : "s"}</span>
+            <span class="category-count">
+              ${items.length} sound${items.length === 1 ? "" : "s"}
+            </span>
           </div>
           <div class="sound-list"></div>
         `;
@@ -648,21 +836,38 @@
         const list = section.querySelector(".sound-list");
 
         for (const sound of items) {
+          const isFavorite = favorites.has(soundKey(sound));
           const row = document.createElement("article");
-          row.className = "sound";
+
+          row.className = `sound${isFavorite ? " favorite" : ""}`;
 
           const tags = sound.tags
             .split(",")
             .map(tag => tag.trim())
             .filter(Boolean)
-            .slice(0, 4)
+            .slice(0, 5)
             .join(" · ");
 
           row.innerHTML = `
-            <button class="sound-btn" type="button" aria-label="Play ${escapeHtml(prettyName(sound.filename))}">▶</button>
+            <button
+              class="sound-btn"
+              type="button"
+              aria-label="Play ${escapeHtml(prettyName(sound.filename))}">
+              ▶
+            </button>
+
+            <button
+              class="icon-btn favorite-btn${isFavorite ? " active" : ""}"
+              type="button"
+              aria-label="${isFavorite ? "Remove from" : "Add to"} favorites"
+              title="${isFavorite ? "Remove from favorites" : "Add to favorites"}">
+              ${isFavorite ? "★" : "☆"}
+            </button>
 
             <div class="sound-name">
-              <strong title="${escapeHtml(sound.filename)}">${escapeHtml(prettyName(sound.filename))}</strong>
+              <strong title="${escapeHtml(sound.filename)}">
+                ${escapeHtml(prettyName(sound.filename))}
+              </strong>
               <small>${escapeHtml(tags)}</small>
             </div>
 
@@ -679,22 +884,50 @@
                 <span></span>
               </div>
             </div>
+
+            <button
+              class="download-btn"
+              type="button"
+              aria-label="Download ${escapeHtml(sound.filename)}"
+              title="Download ${escapeHtml(sound.filename)}">
+              ↓
+            </button>
           `;
 
-          const button = row.querySelector(".sound-btn");
+          const playButton = row.querySelector(".sound-btn");
+          const favoriteButton = row.querySelector(".favorite-btn");
+          const downloadButton = row.querySelector(".download-btn");
           const progress = row.querySelector(".progress");
 
-          button.addEventListener("click", () => playSound(sound, row, button));
+          playButton.addEventListener("click", () => {
+            playSound(sound, row, playButton);
+          });
+
+          favoriteButton.addEventListener("click", () => {
+            toggleFavorite(sound);
+          });
+
+          downloadButton.addEventListener("click", () => {
+            downloadSound(sound, downloadButton);
+          });
 
           progress.addEventListener("click", event => {
             if (!currentAudio || currentRow !== row || !currentAudio.duration) {
-              playSound(sound, row, button);
+              playSound(sound, row, playButton);
               return;
             }
 
             const rect = progress.getBoundingClientRect();
-            const pct = (event.clientX - rect.left) / rect.width;
-            currentAudio.currentTime = Math.max(0, Math.min(currentAudio.duration, pct * currentAudio.duration));
+            const percent = (event.clientX - rect.left) / rect.width;
+
+            currentAudio.currentTime = Math.max(
+              0,
+              Math.min(
+                currentAudio.duration,
+                percent * currentAudio.duration
+              )
+            );
+
             updateProgress();
           });
 
@@ -730,7 +963,7 @@
           throw new Error("The manifest contains no sound entries.");
         }
 
-        const categories = [...new Set(sounds.map(s => s.category))]
+        const categories = [...new Set(sounds.map(sound => sound.category))]
           .sort((a, b) => a.localeCompare(b));
 
         for (const category of categories) {
@@ -760,6 +993,11 @@
     searchEl.addEventListener("input", render);
     categoryFilterEl.addEventListener("change", render);
 
+    favoritesFilterEl.addEventListener("click", () => {
+      favoritesOnly = !favoritesOnly;
+      render();
+    });
+
     volumeEl.addEventListener("input", () => {
       if (currentAudio) {
         currentAudio.volume = Number(volumeEl.value);
@@ -772,7 +1010,8 @@
       if (
         event.code === "Space" &&
         document.activeElement?.tagName !== "INPUT" &&
-        document.activeElement?.tagName !== "SELECT"
+        document.activeElement?.tagName !== "SELECT" &&
+        document.activeElement?.tagName !== "BUTTON"
       ) {
         event.preventDefault();
         stopCurrent();
