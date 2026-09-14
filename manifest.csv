@@ -1,4 +1,10 @@
 category,filename,duration_seconds,description,tags
+ticks,tick_01_soft.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
+ticks,tick_02_warm.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
+ticks,tick_03_clean.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
+ticks,tick_04_chunky.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
+ticks,tick_05_crisp_soft.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
+ticks,tick_06_muted.wav,0,Short repeatable reel tick,"reel,tick,mechanical"
 reels,reel_tick_01.wav,0.04,Short repeatable reel tick,"reel,tick,mechanical"
 reels,reel_tick_02.wav,0.044,Short repeatable reel tick,"reel,tick,mechanical"
 reels,reel_tick_03.wav,0.036,Short repeatable reel tick,"reel,tick,mechanical"
