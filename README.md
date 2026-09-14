@@ -1,16 +1,29 @@
-# Short Loss Jingle Expansion
+# General Game SFX Expansion
 
-Adds 8 shorter loss jingles designed to sit alongside the earlier longer loss set.
+Adds 132 new reusable game sound effects.
+Cumulative manifest entries: 264.
 
-Lengths:
-- Approximately 1.04–1.26 seconds
+All files are mono 48 kHz / 16-bit PCM WAV.
 
-These retain small musical phrases and proper cadences, but reach the result much
-faster so a normal losing spin does not stall the game's pacing.
+## Categories
+- achievements: 6
+- alerts: 6
+- card_tabletop: 8
+- confirmations: 8
+- game_state: 6
+- impacts: 8
+- interactions: 8
+- inventory: 8
+- movement: 8
+- navigation: 8
+- notifications: 8
+- pickups: 8
+- powerups: 8
+- puzzle: 8
+- system_sci_fi: 8
+- transitions: 8
+- ui_general: 10
 
-Integration:
-1. Copy the `losses` folder into your existing SFX library.
-2. Replace your current `manifest.csv` with the included one.
-3. Your existing GitHub Pages preview page will discover them automatically.
-
-The previous longer loss jingles remain in the manifest so you can compare both sets.
+## Install
+Copy these folders into your existing SFX library, then replace the old manifest.csv with the included one.
+Your existing GitHub Pages previewer should detect all new files automatically.
